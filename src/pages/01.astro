@@ -1,0 +1,18 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+  <div id="webgl"></div>
+</Layout>
+
+<script>
+  import { ThreeApp } from '../pages/ThreeApp.ts';
+
+  const wrapper = document.querySelector<HTMLDivElement>('#webgl');
+
+  if (wrapper) {
+    const app = new ThreeApp(wrapper);
+    app.render();
+  }
+</script>
