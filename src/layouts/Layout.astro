@@ -12,5 +12,31 @@ import '../styles/global.css';
   </head>
   <body class="bg-neutral-950">
     <slot />
+    {
+      Astro.url.pathname !== '/' && (
+        <div class="fixed bottom-0 left-0 text-sm text-white mix-blend-difference">
+          <ul>
+            <li>
+              <a href="/" class="inline-block p-1 leading-none">
+                Home
+              </a>
+            </li>
+            {Array.from({ length: 10 }, (_, i) => {
+              const paddedNumber = (i + 1).toString().padStart(2, '0');
+              return (
+                <li>
+                  <a
+                    href={`/${paddedNumber}`}
+                    class="inline-block p-1 leading-none"
+                  >
+                    #{paddedNumber}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )
+    }
   </body>
 </html>

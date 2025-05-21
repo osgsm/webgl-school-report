@@ -11,7 +11,7 @@ export class ThreeApp {
     lookAt: new THREE.Vector3(0.0, 0.0, 0.0),
   };
   static RENDERER_PARAM = {
-    clearColor: 0x666666,
+    clearColor: 0x333333,
     width: window.innerWidth,
     height: window.innerHeight,
   };
