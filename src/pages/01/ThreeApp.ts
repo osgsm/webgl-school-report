@@ -7,16 +7,16 @@ export class ThreeApp {
     aspect: window.innerWidth / window.innerHeight,
     near: 0.1,
     far: 10.0,
-    position: new THREE.Vector3(0.0, 2.0, 5.0),
+    position: new THREE.Vector3(0.0, 0.0, 1.0),
     lookAt: new THREE.Vector3(0.0, 0.0, 0.0),
   };
   static RENDERER_PARAM = {
-    clearColor: 0x333333,
+    clearColor: 0x0a122e,
     width: window.innerWidth,
     height: window.innerHeight,
   };
   static MATERIAL_PARAM = {
-    color: 0x3399ff,
+    color: 0x193cb8,
   };
 
   renderer: THREE.WebGLRenderer;
@@ -25,7 +25,7 @@ export class ThreeApp {
   controls: OrbitControls;
   geometry: THREE.BoxGeometry;
   material: THREE.MeshBasicMaterial;
-  box: THREE.Mesh;
+  boxArray: THREE.Mesh[];
 
   constructor(wrapper: HTMLDivElement) {
     const color = new THREE.Color(ThreeApp.RENDERER_PARAM.clearColor);
@@ -52,9 +52,14 @@ export class ThreeApp {
 
     this.geometry = new THREE.BoxGeometry(1.0, 1.0, 1.0);
     this.material = new THREE.MeshBasicMaterial(ThreeApp.MATERIAL_PARAM);
+    this.material.wireframe = true;
 
-    this.box = new THREE.Mesh(this.geometry, this.material);
-    this.scene.add(this.box);
+    this.boxArray = [];
+    for (let i = 0; i < 100; i++) {
+      const box = new THREE.Mesh(this.geometry, this.material);
+      this.scene.add(box);
+      this.boxArray.push(box);
+    }
 
     window.addEventListener(
       'resize',
@@ -69,6 +74,11 @@ export class ThreeApp {
 
   render = () => {
     requestAnimationFrame(this.render);
+    this.boxArray.forEach((box, i) => {
+      box.rotation.z -= 0.0001 * i;
+      box.rotation.x = Math.sin(i * 0.01) * 10;
+      box.rotation.y = Math.cos(i * 0.01) * 10;
+    });
     this.controls.update();
     this.renderer.render(this.scene, this.camera);
   };
