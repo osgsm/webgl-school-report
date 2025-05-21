@@ -14,14 +14,14 @@ import '../styles/global.css';
     <slot />
     {
       Astro.url.pathname !== '/' && (
-        <div class="fixed bottom-0 left-0 text-sm text-white mix-blend-difference">
+        <div class="fixed bottom-0 left-0 text-sm text-neutral-100 opacity-75 mix-blend-difference">
           <ul>
             <li>
               <a href="/" class="inline-block p-1 leading-none">
                 Home
               </a>
             </li>
-            {Array.from({ length: 10 }, (_, i) => {
+            {Array.from({ length: 1 }, (_, i) => {
               const paddedNumber = (i + 1).toString().padStart(2, '0');
               return (
                 <li>
