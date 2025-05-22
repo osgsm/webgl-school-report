@@ -11,9 +11,11 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.1.7",
     "astro": "^5.7.13",
-    "tailwindcss": "^4.1.7"
+    "tailwindcss": "^4.1.7",
+    "tweakpane": "^4.0.5"
   },
   "devDependencies": {
+    "@tweakpane/core": "^2.0.5",
     "@types/three": "^0.176.0",
     "prettier": "3.5.3",
     "prettier-plugin-astro": "0.14.1",
