@@ -11,12 +11,12 @@ export class ThreeApp {
     lookAt: new THREE.Vector3(0.0, 0.0, 0.0),
   };
   static RENDERER_PARAM = {
-    clearColor: 0x0a122e,
+    clearColor: 0x000000,
     width: window.innerWidth,
     height: window.innerHeight,
   };
   static MATERIAL_PARAM = {
-    color: 0x193cb8,
+    color: 0x555555,
   };
 
   renderer: THREE.WebGLRenderer;
@@ -48,6 +48,7 @@ export class ThreeApp {
     this.camera.lookAt(ThreeApp.CAMERA_PARAM.lookAt);
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.controls.enableZoom = false;
     this.controls.enableDamping = true;
 
     this.geometry = new THREE.BoxGeometry(1.0, 1.0, 1.0);
