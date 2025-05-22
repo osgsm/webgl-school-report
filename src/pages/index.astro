@@ -4,16 +4,16 @@ import Layout from '../layouts/Layout.astro';
 
 <Layout>
   <h1
-    class="border-b border-neutral-800 pb-[0.15em] pt-[0.1em] text-[11vw]/[0.8] -tracking-wider text-neutral-700"
+    class="border-b border-neutral-700 pb-[0.15em] pt-[0.1em] text-[10vw]/[0.8] -tracking-wider text-neutral-700"
   >
     <a href="/">WebGL School Report</a>
   </h1>
-  <ul class="text-[11vw]/none tabular-nums -tracking-[0.05em]">
+  <ul class="text-[10vw]/none tabular-nums -tracking-[0.05em]">
     {
       Array.from({ length: 1 }, (_, i) => {
         const paddedNumber = (i + 1).toString().padStart(2, '0');
         return (
-          <li class="border-b border-neutral-800 text-neutral-700 hover:bg-neutral-900">
+          <li class="border-b border-neutral-700 text-neutral-700 hover:bg-neutral-900">
             <a
               class="flex gap-[0.1em] hover:text-neutral-500"
               href={`/${paddedNumber}`}
@@ -25,5 +25,16 @@ import Layout from '../layouts/Layout.astro';
         );
       })
     }
+    <li
+      class="border-b border-neutral-700 text-neutral-700 hover:bg-neutral-900"
+    >
+      <a
+        class="flex justify-end gap-[0.1em] hover:text-neutral-500"
+        href="https://github.com/osgsm/webgl-school-report/"
+        target="_blank"
+      >
+        GitHub<span class="pr-[0.1em] font-thin text-neutral-700">↗</span>
+      </a>
+    </li>
   </ul>
 </Layout>

@@ -14,10 +14,13 @@ import '../styles/global.css';
     <slot />
     {
       Astro.url.pathname !== '/' && (
-        <div class="fixed bottom-0 left-0 text-sm text-neutral-100 opacity-75 mix-blend-difference">
+        <div class="fixed left-0 top-0 text-sm text-neutral-100 mix-blend-difference">
           <ul>
             <li>
-              <a href="/" class="inline-block p-1 leading-none">
+              <a
+                href="/"
+                class="inline-block p-1 leading-none opacity-75 hover:opacity-100"
+              >
                 Home
               </a>
             </li>
@@ -27,13 +30,22 @@ import '../styles/global.css';
                 <li>
                   <a
                     href={`/${paddedNumber}`}
-                    class="inline-block p-1 leading-none"
+                    class="inline-block p-1 leading-none opacity-75 hover:opacity-100"
                   >
                     #{paddedNumber}
                   </a>
                 </li>
               );
             })}
+            <li>
+              <a
+                class="inline-block p-1 leading-none opacity-75 hover:opacity-100"
+                href="https://github.com/osgsm/webgl-school-report/"
+                target="_blank"
+              >
+                GitHub↗
+              </a>
+            </li>
           </ul>
         </div>
       )
