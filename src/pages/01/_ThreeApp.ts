@@ -35,6 +35,7 @@ export class ThreeApp {
       ThreeApp.RENDERER_PARAM.width,
       ThreeApp.RENDERER_PARAM.height,
     );
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     wrapper.appendChild(this.renderer.domElement);
 
     this.scene = new THREE.Scene();
