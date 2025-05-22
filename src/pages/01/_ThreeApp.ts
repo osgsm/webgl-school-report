@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { Pane } from 'tweakpane';
 
 export class ThreeApp {
   static CAMERA_PARAM = {
@@ -17,6 +18,10 @@ export class ThreeApp {
   };
   static MATERIAL_PARAM = {
     color: 0x555555,
+    wireframe: true,
+  };
+  static BOX_PARAM = {
+    count: 100,
   };
 
   renderer: THREE.WebGLRenderer;
@@ -26,9 +31,11 @@ export class ThreeApp {
   geometry: THREE.BoxGeometry;
   material: THREE.MeshBasicMaterial;
   boxArray: THREE.Mesh[];
+  pane: Pane;
 
   constructor(wrapper: HTMLDivElement) {
     const color = new THREE.Color(ThreeApp.RENDERER_PARAM.clearColor);
+    this.pane = new Pane();
     this.renderer = new THREE.WebGLRenderer();
     this.renderer.setClearColor(color);
     this.renderer.setSize(
@@ -53,14 +60,16 @@ export class ThreeApp {
 
     this.geometry = new THREE.BoxGeometry(1.0, 1.0, 1.0);
     this.material = new THREE.MeshBasicMaterial(ThreeApp.MATERIAL_PARAM);
-    this.material.wireframe = true;
+    this.material.wireframe = ThreeApp.MATERIAL_PARAM.wireframe;
 
     this.boxArray = [];
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < ThreeApp.BOX_PARAM.count; i++) {
       const box = new THREE.Mesh(this.geometry, this.material);
       this.scene.add(box);
       this.boxArray.push(box);
     }
+
+    this.setupTweakpane();
 
     window.addEventListener(
       'resize',
@@ -82,5 +91,43 @@ export class ThreeApp {
     });
     this.controls.update();
     this.renderer.render(this.scene, this.camera);
+  };
+
+  setupTweakpane = () => {
+    this.pane
+      .addBinding(ThreeApp.RENDERER_PARAM, 'clearColor', {
+        view: 'color',
+      })
+      .on('change', (ev) => {
+        this.renderer.setClearColor(ev.value);
+      });
+
+    this.pane
+      .addBinding(ThreeApp.MATERIAL_PARAM, 'color', {
+        view: 'color',
+      })
+      .on('change', (ev) => {
+        this.material.color.set(ev.value);
+      });
+
+    this.pane
+      .addBinding(ThreeApp.BOX_PARAM, 'count', {
+        min: 1,
+        max: 500,
+        step: 1,
+      })
+      .on('change', (ev) => {
+        this.boxArray.forEach((box) => {
+          this.scene.remove(box);
+        });
+
+        this.boxArray = [];
+
+        for (let i = 0; i < ev.value; i++) {
+          const box = new THREE.Mesh(this.geometry, this.material);
+          this.scene.add(box);
+          this.boxArray.push(box);
+        }
+      });
   };
 }
