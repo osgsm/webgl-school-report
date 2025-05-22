@@ -7,7 +7,7 @@ export class ThreeApp {
     aspect: window.innerWidth / window.innerHeight,
     near: 0.1,
     far: 10.0,
-    position: new THREE.Vector3(0.0, 0.0, 1.0),
+    position: new THREE.Vector3(0.1, 0.2, 0.9),
     lookAt: new THREE.Vector3(0.0, 0.0, 0.0),
   };
   static RENDERER_PARAM = {
@@ -49,7 +49,6 @@ export class ThreeApp {
     this.camera.lookAt(ThreeApp.CAMERA_PARAM.lookAt);
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-    this.controls.enableZoom = false;
     this.controls.enableDamping = true;
 
     this.geometry = new THREE.BoxGeometry(1.0, 1.0, 1.0);
@@ -76,10 +75,10 @@ export class ThreeApp {
 
   render = () => {
     requestAnimationFrame(this.render);
-    this.boxArray.forEach((box, i) => {
-      box.rotation.z -= 0.0001 * i;
-      box.rotation.x = Math.sin(i * 0.01) * 10;
-      box.rotation.y = Math.cos(i * 0.01) * 10;
+    this.boxArray.forEach((box, i, array) => {
+      box.rotation.z += (Math.PI / 2 / array.length) * (i + 1) * 0.01;
+      box.rotation.x = Math.sin((Math.PI / array.length) * i);
+      box.rotation.y = Math.cos((Math.PI / array.length) * i);
     });
     this.controls.update();
     this.renderer.render(this.scene, this.camera);
