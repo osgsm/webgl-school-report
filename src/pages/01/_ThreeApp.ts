@@ -98,16 +98,16 @@ export class ThreeApp {
       .addBinding(ThreeApp.RENDERER_PARAM, 'clearColor', {
         view: 'color',
       })
-      .on('change', (ev) => {
-        this.renderer.setClearColor(ev.value);
+      .on('change', (e) => {
+        this.renderer.setClearColor(e.value);
       });
 
     this.pane
       .addBinding(ThreeApp.MATERIAL_PARAM, 'color', {
         view: 'color',
       })
-      .on('change', (ev) => {
-        this.material.color.set(ev.value);
+      .on('change', (e) => {
+        this.material.color.set(e.value);
       });
 
     this.pane
@@ -116,14 +116,14 @@ export class ThreeApp {
         max: 300,
         step: 1,
       })
-      .on('change', (ev) => {
+      .on('change', (e) => {
         this.boxArray.forEach((box) => {
           this.scene.remove(box);
         });
 
         this.boxArray = [];
 
-        for (let i = 0; i < ev.value; i++) {
+        for (let i = 0; i < e.value; i++) {
           const box = new THREE.Mesh(this.geometry, this.material);
           this.scene.add(box);
           this.boxArray.push(box);
