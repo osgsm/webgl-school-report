@@ -8,7 +8,7 @@ export class ThreeApp {
     aspect: window.innerWidth / window.innerHeight,
     near: 0.1,
     far: 10.0,
-    position: new THREE.Vector3(0.0, 0.0, 1.0),
+    position: new THREE.Vector3(0.0, 0.0, 0.8),
     lookAt: new THREE.Vector3(0.0, 0.0, 0.0),
   };
   static RENDERER_PARAM = {
@@ -113,7 +113,7 @@ export class ThreeApp {
     this.pane
       .addBinding(ThreeApp.BOX_PARAM, 'count', {
         min: 1,
-        max: 500,
+        max: 300,
         step: 1,
       })
       .on('change', (ev) => {
