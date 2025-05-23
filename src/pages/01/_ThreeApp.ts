@@ -8,7 +8,7 @@ export class ThreeApp {
     aspect: window.innerWidth / window.innerHeight,
     near: 0.1,
     far: 10.0,
-    position: new THREE.Vector3(0.1, 0.2, 0.9),
+    position: new THREE.Vector3(0.0, 0.0, 1.0),
     lookAt: new THREE.Vector3(0.0, 0.0, 0.0),
   };
   static RENDERER_PARAM = {
