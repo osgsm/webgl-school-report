@@ -10,7 +10,7 @@ const reports = [
 
 <Layout>
   <h1
-    class="border-y border-neutral-700 pb-[0.15em] pt-[0.1em] text-[10vw]/[0.8] -tracking-wider text-neutral-500"
+    class="border-y border-neutral-700 pb-[0.15em] pt-[0.1em] text-[10vw]/[0.8] -tracking-[0.05em] text-neutral-500"
   >
     <a href="/">WebGL School Report</a>
   </h1>
@@ -26,8 +26,10 @@ const reports = [
               class="flex gap-[0.2em] hover:text-neutral-500"
               href={`/${paddedNumber}`}
             >
-              <span class="font-thin text-neutral-500">#</span>
-              <span>{paddedNumber}</span>
+              <span class="flex gap-[0.1em]">
+                <span class="font-thin text-neutral-500">#</span>
+                <span>{paddedNumber}</span>
+              </span>
               <span class="text-neutral-700">{report.title}</span>
             </a>
           </li>
