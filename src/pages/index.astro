@@ -1,33 +1,40 @@
 ---
 import Layout from '../layouts/Layout.astro';
+
+const reports = [
+  {
+    title: 'Rotating 100 Boxes',
+  },
+];
 ---
 
 <Layout>
   <h1
-    class="border-y border-neutral-600 pb-[0.15em] pt-[0.1em] text-[10vw]/[0.8] -tracking-wider text-neutral-500"
+    class="border-y border-neutral-700 pb-[0.15em] pt-[0.1em] text-[10vw]/[0.8] -tracking-wider text-neutral-500"
   >
     <a href="/">WebGL School Report</a>
   </h1>
   <ul
-    class="text-[10vw]/none tabular-nums -tracking-[0.05em] text-neutral-500 *:border-neutral-600"
+    class="text-[10vw]/none -tracking-[0.05em] text-neutral-500 *:overflow-clip *:border-b *:border-neutral-700 *:hover:bg-neutral-900"
   >
     {
-      Array.from({ length: 1 }, (_, i) => {
+      reports.map((report, i) => {
         const paddedNumber = (i + 1).toString().padStart(2, '0');
         return (
-          <li class="border-b hover:bg-neutral-900">
+          <li>
             <a
-              class="flex gap-[0.1em] hover:text-neutral-500"
+              class="flex gap-[0.2em] hover:text-neutral-500"
               href={`/${paddedNumber}`}
             >
               <span class="font-thin text-neutral-500">#</span>
               <span>{paddedNumber}</span>
+              <span class="text-neutral-700">{report.title}</span>
             </a>
           </li>
         );
       })
     }
-    <li class="border-b hover:bg-neutral-900">
+    <li>
       <a
         class="flex justify-end gap-[0.1em] hover:text-neutral-500"
         href="https://github.com/osgsm/webgl-school-report/"
