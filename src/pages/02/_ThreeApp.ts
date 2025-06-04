@@ -8,7 +8,7 @@ export class ThreeApp {
     aspect: window.innerWidth / window.innerHeight,
     near: 0.1,
     far: 10.0,
-    position: new THREE.Vector3(1.0, 1.5, 2.0),
+    position: new THREE.Vector3(1.0, 1.0, 2.0),
     lookAt: new THREE.Vector3(0.0, 0.0, 0.0),
   };
   static RENDERER_PARAM = {
@@ -123,13 +123,13 @@ export class ThreeApp {
 
     const bladeGeometry = new THREE.ShapeGeometry(bladeShape);
 
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 5; i++) {
       const bladeMesh = new THREE.Mesh(bladeGeometry, this.material);
 
-      bladeMesh.position.x = Math.cos((i * 2 * Math.PI) / 3) * 0.05;
-      bladeMesh.position.y = Math.sin((i * 2 * Math.PI) / 3) * 0.05;
+      bladeMesh.position.x = Math.cos((i * 2 * Math.PI) / 5) * 0.05;
+      bladeMesh.position.y = Math.sin((i * 2 * Math.PI) / 5) * 0.05;
       bladeMesh.position.z = 0.01;
-      bladeMesh.rotation.z = (i * 2 * Math.PI) / 3;
+      bladeMesh.rotation.z = (i * 2 * Math.PI) / 5;
 
       this.blades.add(bladeMesh);
     }
