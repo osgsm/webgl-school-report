@@ -87,24 +87,32 @@ export class ThreeApp {
     );
     this.fan.add(this.base);
 
-    /**
-     * FanHead
-     */
-    this.fanHead = new THREE.Group();
-    this.fan.add(this.fanHead);
-
     this.pole = new THREE.Mesh(
       new THREE.CylinderGeometry(0.03, 0.03, 0.6),
       this.material,
     );
-    this.fanHead.position.y = 0.3;
-    this.fanHead.add(this.pole);
+    this.pole.position.y = 0.3;
+    this.fan.add(this.pole);
+
+    /**
+     * FanHead
+     */
+    this.fanHead = new THREE.Group();
+    this.fanHead.position.y = 0.6;
+    this.fan.add(this.fanHead);
+
+    const torusGeometry = new THREE.TorusGeometry(0.25, 0.0025, 16, 64);
+    for (let i = 0; i < 10; i++) {
+      const torusMesh = new THREE.Mesh(torusGeometry, this.material);
+      torusMesh.rotation.x = (i * 2 * Math.PI) / 10;
+      torusMesh.position.z = 0.08;
+      this.fanHead.add(torusMesh);
+    }
 
     const mortor = new THREE.Mesh(
       new THREE.CylinderGeometry(0.09, 0.09, 0.15),
       this.material,
     );
-    mortor.position.y = 0.3;
     mortor.rotation.x = Math.PI / 2;
     this.fanHead.add(mortor);
 
@@ -141,7 +149,6 @@ export class ThreeApp {
     this.hub.rotation.x = Math.PI / 2;
     this.blades.add(this.hub);
 
-    this.blades.position.y = 0.3;
     this.blades.position.z = 0.085;
     this.fanHead.add(this.blades);
 
