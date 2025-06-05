@@ -11,7 +11,7 @@ export class ThreeApp {
     aspect: window.innerWidth / window.innerHeight,
     near: 0.1,
     far: 10.0,
-    position: new THREE.Vector3(1.0, 1.0, 2.0),
+    position: new THREE.Vector3(1.0, -0.25, 2.0),
     lookAt: new THREE.Vector3(0.0, 0.0, 0.0),
   };
   static RENDERER_PARAM = {
@@ -36,7 +36,7 @@ export class ThreeApp {
   ambientLight: THREE.AmbientLight;
   controls: OrbitControls;
   geometry: THREE.BoxGeometry;
-  material: THREE.MeshStandardMaterial;
+  material: THREE.MeshNormalMaterial;
   blueMaterial: THREE.MeshStandardMaterial;
   redMaterial: THREE.MeshStandardMaterial;
   yellowMaterial: THREE.MeshStandardMaterial;
@@ -81,7 +81,7 @@ export class ThreeApp {
       new THREE.Vector2(window.innerWidth, window.innerHeight),
       1.0,
       0.25,
-      1.0,
+      0.5,
     );
     this.composer.addPass(this.renderPass);
     this.composer.addPass(this.bloomPass);
@@ -99,9 +99,7 @@ export class ThreeApp {
     this.controls.enableDamping = true;
 
     this.geometry = new THREE.BoxGeometry(1.0, 1.0, 1.0);
-    this.material = new THREE.MeshStandardMaterial({
-      color: 0xcccccc,
-    });
+    this.material = new THREE.MeshNormalMaterial();
     this.material.side = THREE.DoubleSide;
 
     this.blueMaterial = new THREE.MeshStandardMaterial({
@@ -124,14 +122,14 @@ export class ThreeApp {
 
     this.base = new THREE.Mesh(
       new THREE.BoxGeometry(0.4, 0.02, 0.5),
-      this.greenMaterial,
+      this.material,
     );
     this.base.position.z = -0.04;
     this.fan.add(this.base);
 
     this.pole = new THREE.Mesh(
       new THREE.CylinderGeometry(0.03, 0.03, 0.6),
-      this.blueMaterial,
+      this.material,
     );
     this.pole.position.y = 0.3;
     this.pole.position.z = -0.03;
@@ -149,7 +147,7 @@ export class ThreeApp {
     const torusCount = 30;
     const torusGeometry = new THREE.TorusGeometry(0.25, 0.001, 16, 64);
     for (let i = 0; i < torusCount; i++) {
-      const torusMesh = new THREE.Mesh(torusGeometry, this.greenMaterial);
+      const torusMesh = new THREE.Mesh(torusGeometry, this.material);
       torusMesh.rotation.x = (i * 2 * Math.PI) / torusCount;
       torusMesh.position.z = 0.08;
       this.fanHead.add(torusMesh);
@@ -157,7 +155,7 @@ export class ThreeApp {
 
     const mortor = new THREE.Mesh(
       new THREE.CylinderGeometry(0.09, 0.09, 0.15),
-      this.greenMaterial,
+      this.material,
     );
     mortor.rotation.x = Math.PI / 2;
     this.fanHead.add(mortor);
@@ -178,7 +176,7 @@ export class ThreeApp {
     const bladeGeometry = new THREE.ShapeGeometry(bladeShape);
 
     for (let i = 0; i < 5; i++) {
-      const bladeMesh = new THREE.Mesh(bladeGeometry, this.yellowMaterial);
+      const bladeMesh = new THREE.Mesh(bladeGeometry, this.material);
 
       bladeMesh.position.x = Math.cos((i * 2 * Math.PI) / 5) * 0.05;
       bladeMesh.position.y = Math.sin((i * 2 * Math.PI) / 5) * 0.05;
@@ -189,8 +187,9 @@ export class ThreeApp {
     }
 
     this.hub = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.075, 0.075, 0.04),
-      this.redMaterial,
+      // new THREE.CylinderGeometry(0.075, 0.075, 0.04),
+      new THREE.SphereGeometry(0.075, 16, 16),
+      this.material,
     );
     this.hub.rotation.x = Math.PI / 2;
     this.blades.add(this.hub);
@@ -236,14 +235,6 @@ export class ThreeApp {
       })
       .on('change', (e) => {
         this.renderer.setClearColor(e.value);
-      });
-
-    this.pane
-      .addBinding(ThreeApp.MATERIAL_PARAM, 'color', {
-        view: 'color',
-      })
-      .on('change', (e) => {
-        this.material.color.set(e.value);
       });
   };
 }
