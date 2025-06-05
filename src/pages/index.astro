@@ -5,6 +5,9 @@ const reports = [
   {
     title: 'Rotating 100 Boxes',
   },
+  {
+    title: 'Fan',
+  },
 ];
 ---
 
@@ -28,7 +31,9 @@ const reports = [
             >
               <span class="flex gap-[0.1em]">
                 <span class="font-thin text-neutral-500">#</span>
-                <span>{paddedNumber}</span>
+                <span class="tabular-nums -tracking-widest">
+                  {paddedNumber}
+                </span>
               </span>
               <span class="text-neutral-700">{report.title}</span>
             </a>
