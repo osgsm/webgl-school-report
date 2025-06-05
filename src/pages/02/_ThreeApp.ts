@@ -1,5 +1,8 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { Pane } from 'tweakpane';
 
 export class ThreeApp {
@@ -24,6 +27,9 @@ export class ThreeApp {
   };
 
   renderer: THREE.WebGLRenderer;
+  composer: EffectComposer;
+  renderPass: RenderPass;
+  bloomPass: UnrealBloomPass;
   scene: THREE.Scene;
   camera: THREE.OrthographicCamera;
   directionalLight: THREE.DirectionalLight;
@@ -31,6 +37,10 @@ export class ThreeApp {
   controls: OrbitControls;
   geometry: THREE.BoxGeometry;
   material: THREE.MeshStandardMaterial;
+  blueMaterial: THREE.MeshStandardMaterial;
+  redMaterial: THREE.MeshStandardMaterial;
+  yellowMaterial: THREE.MeshStandardMaterial;
+  greenMaterial: THREE.MeshStandardMaterial;
   pane: Pane;
   fan: THREE.Group;
   base: THREE.Mesh;
@@ -52,6 +62,8 @@ export class ThreeApp {
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     wrapper.appendChild(this.renderer.domElement);
 
+    this.composer = new EffectComposer(this.renderer);
+
     this.scene = new THREE.Scene();
 
     const aspect = window.innerWidth / window.innerHeight;
@@ -64,12 +76,22 @@ export class ThreeApp {
     this.camera.position.copy(ThreeApp.CAMERA_PARAM.position);
     this.camera.lookAt(ThreeApp.CAMERA_PARAM.lookAt);
 
+    this.renderPass = new RenderPass(this.scene, this.camera);
+    this.bloomPass = new UnrealBloomPass(
+      new THREE.Vector2(window.innerWidth, window.innerHeight),
+      1.0,
+      0.25,
+      1.0,
+    );
+    this.composer.addPass(this.renderPass);
+    this.composer.addPass(this.bloomPass);
+
     this.clock = new THREE.Clock();
 
     this.ambientLight = new THREE.AmbientLight(0xffffff, 0.25);
     this.scene.add(this.ambientLight);
 
-    this.directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
+    this.directionalLight = new THREE.DirectionalLight(0xffffff, 12.0);
     this.directionalLight.position.set(1.0, 1.0, 1.0);
     this.scene.add(this.directionalLight);
 
@@ -77,8 +99,23 @@ export class ThreeApp {
     this.controls.enableDamping = true;
 
     this.geometry = new THREE.BoxGeometry(1.0, 1.0, 1.0);
-    this.material = new THREE.MeshStandardMaterial(ThreeApp.MATERIAL_PARAM);
+    this.material = new THREE.MeshStandardMaterial({
+      color: 0xcccccc,
+    });
     this.material.side = THREE.DoubleSide;
+
+    this.blueMaterial = new THREE.MeshStandardMaterial({
+      color: 0x2437e0,
+    });
+    this.redMaterial = new THREE.MeshStandardMaterial({
+      color: 0xc2120e,
+    });
+    this.yellowMaterial = new THREE.MeshStandardMaterial({
+      color: 0xb8aa00,
+    });
+    this.greenMaterial = new THREE.MeshStandardMaterial({
+      color: 0x118534,
+    });
 
     this.fan = new THREE.Group();
     this.fan.position.y = -0.6;
@@ -87,14 +124,14 @@ export class ThreeApp {
 
     this.base = new THREE.Mesh(
       new THREE.BoxGeometry(0.4, 0.02, 0.5),
-      this.material,
+      this.greenMaterial,
     );
     this.base.position.z = -0.04;
     this.fan.add(this.base);
 
     this.pole = new THREE.Mesh(
       new THREE.CylinderGeometry(0.03, 0.03, 0.6),
-      this.material,
+      this.blueMaterial,
     );
     this.pole.position.y = 0.3;
     this.pole.position.z = -0.03;
@@ -112,7 +149,7 @@ export class ThreeApp {
     const torusCount = 30;
     const torusGeometry = new THREE.TorusGeometry(0.25, 0.001, 16, 64);
     for (let i = 0; i < torusCount; i++) {
-      const torusMesh = new THREE.Mesh(torusGeometry, this.material);
+      const torusMesh = new THREE.Mesh(torusGeometry, this.greenMaterial);
       torusMesh.rotation.x = (i * 2 * Math.PI) / torusCount;
       torusMesh.position.z = 0.08;
       this.fanHead.add(torusMesh);
@@ -120,7 +157,7 @@ export class ThreeApp {
 
     const mortor = new THREE.Mesh(
       new THREE.CylinderGeometry(0.09, 0.09, 0.15),
-      this.material,
+      this.greenMaterial,
     );
     mortor.rotation.x = Math.PI / 2;
     this.fanHead.add(mortor);
@@ -141,7 +178,7 @@ export class ThreeApp {
     const bladeGeometry = new THREE.ShapeGeometry(bladeShape);
 
     for (let i = 0; i < 5; i++) {
-      const bladeMesh = new THREE.Mesh(bladeGeometry, this.material);
+      const bladeMesh = new THREE.Mesh(bladeGeometry, this.yellowMaterial);
 
       bladeMesh.position.x = Math.cos((i * 2 * Math.PI) / 5) * 0.05;
       bladeMesh.position.y = Math.sin((i * 2 * Math.PI) / 5) * 0.05;
@@ -153,7 +190,7 @@ export class ThreeApp {
 
     this.hub = new THREE.Mesh(
       new THREE.CylinderGeometry(0.075, 0.075, 0.04),
-      this.material,
+      this.redMaterial,
     );
     this.hub.rotation.x = Math.PI / 2;
     this.blades.add(this.hub);
@@ -189,7 +226,7 @@ export class ThreeApp {
     this.blades.rotation.z = -(elapsedTime * 10);
 
     this.controls.update();
-    this.renderer.render(this.scene, this.camera);
+    this.composer.render();
   };
 
   setupTweakpane = () => {
