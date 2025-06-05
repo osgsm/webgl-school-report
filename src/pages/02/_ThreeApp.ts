@@ -79,8 +79,8 @@ export class ThreeApp {
     this.bloomPass = new UnrealBloomPass(
       new THREE.Vector2(window.innerWidth, window.innerHeight),
       1.0,
+      1.5,
       0.25,
-      0.5,
     );
     this.composer.addPass(this.renderPass);
     this.composer.addPass(this.bloomPass);
