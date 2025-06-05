@@ -1,5 +1,7 @@
 ---
 import '../styles/global.css';
+
+const { classNames = '' } = Astro.props;
 ---
 
 <!doctype html>
@@ -10,7 +12,7 @@ import '../styles/global.css';
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>WebGL School Report</title>
   </head>
-  <body class="overflow-hidden bg-neutral-950">
+  <body class=`bg-neutral-950 ${classNames}`>
     <slot />
     {
       Astro.url.pathname !== '/' && (
