@@ -11,7 +11,7 @@ export class ThreeApp {
     aspect: window.innerWidth / window.innerHeight,
     near: 0.1,
     far: 10.0,
-    position: new THREE.Vector3(1.0, -0.25, 2.0),
+    position: new THREE.Vector3(1.0, 0.0, 0.0),
     lookAt: new THREE.Vector3(0.0, 0.0, 0.0),
   };
   static RENDERER_PARAM = {
@@ -32,7 +32,6 @@ export class ThreeApp {
   bloomPass: UnrealBloomPass;
   scene: THREE.Scene;
   camera: THREE.OrthographicCamera;
-  directionalLight: THREE.DirectionalLight;
   ambientLight: THREE.AmbientLight;
   controls: OrbitControls;
   geometry: THREE.BoxGeometry;
@@ -90,10 +89,6 @@ export class ThreeApp {
 
     this.ambientLight = new THREE.AmbientLight(0xffffff, 0.25);
     this.scene.add(this.ambientLight);
-
-    this.directionalLight = new THREE.DirectionalLight(0xffffff, 12.0);
-    this.directionalLight.position.set(1.0, 1.0, 1.0);
-    this.scene.add(this.directionalLight);
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.enableDamping = true;
