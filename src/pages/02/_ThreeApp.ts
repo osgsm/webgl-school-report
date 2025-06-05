@@ -27,8 +27,8 @@ export class ThreeApp {
   };
   static BLOOM_PARAM = {
     strength: 1.0,
-    radius: 1.5,
-    threshold: 0.25,
+    radius: 1.0,
+    threshold: 0.5,
   };
 
   renderer: THREE.WebGLRenderer;
