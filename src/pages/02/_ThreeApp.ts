@@ -25,6 +25,11 @@ export class ThreeApp {
   static BOX_PARAM = {
     count: 100,
   };
+  static BLOOM_PARAM = {
+    strength: 1.0,
+    radius: 1.5,
+    threshold: 0.25,
+  };
 
   renderer: THREE.WebGLRenderer;
   composer: EffectComposer;
@@ -78,9 +83,9 @@ export class ThreeApp {
     this.renderPass = new RenderPass(this.scene, this.camera);
     this.bloomPass = new UnrealBloomPass(
       new THREE.Vector2(window.innerWidth, window.innerHeight),
-      1.0,
-      1.5,
-      0.25,
+      ThreeApp.BLOOM_PARAM.strength,
+      ThreeApp.BLOOM_PARAM.radius,
+      ThreeApp.BLOOM_PARAM.threshold,
     );
     this.composer.addPass(this.renderPass);
     this.composer.addPass(this.bloomPass);
@@ -225,11 +230,36 @@ export class ThreeApp {
 
   setupTweakpane = () => {
     this.pane
-      .addBinding(ThreeApp.RENDERER_PARAM, 'clearColor', {
-        view: 'color',
+      .addBinding(ThreeApp.BLOOM_PARAM, 'strength', {
+        view: 'number',
+        min: 0.0,
+        max: 2.0,
+        step: 0.1,
       })
       .on('change', (e) => {
-        this.renderer.setClearColor(e.value);
+        this.bloomPass.strength = e.value;
+      });
+
+    this.pane
+      .addBinding(ThreeApp.BLOOM_PARAM, 'radius', {
+        view: 'number',
+        min: 0.0,
+        max: 2.0,
+        step: 0.1,
+      })
+      .on('change', (e) => {
+        this.bloomPass.radius = e.value;
+      });
+
+    this.pane
+      .addBinding(ThreeApp.BLOOM_PARAM, 'threshold', {
+        view: 'number',
+        min: 0.0,
+        max: 1.0,
+        step: 0.1,
+      })
+      .on('change', (e) => {
+        this.bloomPass.threshold = e.value;
       });
   };
 }
