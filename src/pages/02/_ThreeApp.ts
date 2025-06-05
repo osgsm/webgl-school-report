@@ -86,7 +86,7 @@ export class ThreeApp {
     this.scene.add(this.fan);
 
     this.base = new THREE.Mesh(
-      new THREE.BoxGeometry(0.4, 0.05, 0.5),
+      new THREE.BoxGeometry(0.4, 0.02, 0.5),
       this.material,
     );
     this.base.position.z = -0.04;
