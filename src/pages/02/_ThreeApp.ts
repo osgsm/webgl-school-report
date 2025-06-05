@@ -38,6 +38,7 @@ export class ThreeApp {
   pole: THREE.Mesh;
   blades: THREE.Group;
   hub: THREE.Mesh;
+  clock: THREE.Clock;
 
   constructor(wrapper: HTMLDivElement) {
     const color = new THREE.Color(ThreeApp.RENDERER_PARAM.clearColor);
@@ -63,6 +64,8 @@ export class ThreeApp {
     this.camera.position.copy(ThreeApp.CAMERA_PARAM.position);
     this.camera.lookAt(ThreeApp.CAMERA_PARAM.lookAt);
 
+    this.clock = new THREE.Clock();
+
     this.ambientLight = new THREE.AmbientLight(0xffffff, 0.25);
     this.scene.add(this.ambientLight);
 
@@ -78,13 +81,15 @@ export class ThreeApp {
     this.material.side = THREE.DoubleSide;
 
     this.fan = new THREE.Group();
-    this.fan.position.y = -0.3;
+    this.fan.position.y = -0.6;
+    this.fan.scale.set(1.5, 1.5, 1.5);
     this.scene.add(this.fan);
 
     this.base = new THREE.Mesh(
-      new THREE.BoxGeometry(0.4, 0.05, 0.4),
+      new THREE.BoxGeometry(0.4, 0.05, 0.5),
       this.material,
     );
+    this.base.position.z = -0.04;
     this.fan.add(this.base);
 
     this.pole = new THREE.Mesh(
@@ -92,6 +97,8 @@ export class ThreeApp {
       this.material,
     );
     this.pole.position.y = 0.3;
+    this.pole.position.z = -0.03;
+    this.pole.rotation.x = -(Math.PI / 20);
     this.fan.add(this.pole);
 
     /**
@@ -99,12 +106,14 @@ export class ThreeApp {
      */
     this.fanHead = new THREE.Group();
     this.fanHead.position.y = 0.6;
+    this.fanHead.position.z = -0.075;
     this.fan.add(this.fanHead);
 
-    const torusGeometry = new THREE.TorusGeometry(0.25, 0.0025, 16, 64);
-    for (let i = 0; i < 10; i++) {
+    const torusCount = 30;
+    const torusGeometry = new THREE.TorusGeometry(0.25, 0.001, 16, 64);
+    for (let i = 0; i < torusCount; i++) {
       const torusMesh = new THREE.Mesh(torusGeometry, this.material);
-      torusMesh.rotation.x = (i * 2 * Math.PI) / 10;
+      torusMesh.rotation.x = (i * 2 * Math.PI) / torusCount;
       torusMesh.position.z = 0.08;
       this.fanHead.add(torusMesh);
     }
@@ -169,13 +178,15 @@ export class ThreeApp {
   }
 
   render = () => {
+    const elapsedTime = this.clock.getElapsedTime();
+
     requestAnimationFrame(this.render);
 
     // Rotate fanHead
-    this.fanHead.rotation.y += 0.01;
+    this.fanHead.rotation.y = Math.sin(elapsedTime * 0.5);
 
     // Rotate blades
-    this.blades.rotation.z += 0.1;
+    this.blades.rotation.z = -(elapsedTime * 10);
 
     this.controls.update();
     this.renderer.render(this.scene, this.camera);
