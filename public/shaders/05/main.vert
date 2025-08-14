@@ -1,0 +1,10 @@
+// attribute は「頂点属性」であることを示す修飾子
+attribute vec3 position;
+attribute vec4 color;
+
+varying vec4 vColor;
+
+void main() {
+  vColor = color;
+  gl_Position = vec4(position, 1.0);
+}
