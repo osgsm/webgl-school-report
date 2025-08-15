@@ -10,6 +10,11 @@ export class App {
   colorStride!: number;
   positionVbo!: WebGLBuffer;
   colorVbo!: WebGLBuffer;
+  uniformLocation!: {
+    time: WebGLUniformLocation | null;
+  };
+  startTime!: number;
+  isRendering!: boolean;
 
   init = () => {
     this.canvas = document.getElementById('webgl-canvas') as HTMLCanvasElement;
@@ -50,21 +55,63 @@ export class App {
   };
 
   setupGeometry = () => {
-    // prettier-ignore
-    this.position = [
-      0.0, 0.5, 0.0,
-      0.5, -0.5, 0.0,
-      -0.5, -0.5, 0.0,
-    ];
+    const radius = 0.5;
+    const centerX = 0.0;
+    const centerY = 0.0;
+    const centerZ = 0.0;
+    const numVertices = 20;
+    const startAngle = Math.PI / 2;
+
+    const polygonVertices = [];
+    for (let i = 0; i < numVertices; i++) {
+      const angle = startAngle + (i * 2 * Math.PI) / numVertices;
+      const x = centerX + radius * Math.cos(angle);
+      const y = centerY + radius * Math.sin(angle);
+      polygonVertices.push(x, y, centerZ);
+    }
+
+    this.position = [];
+    this.position.push(centerX, centerY, centerZ);
+
+    for (let i = 0; i < numVertices; i++) {
+      const currentIndex = i * 3;
+      const nextIndex = ((i + 1) % numVertices) * 3;
+
+      this.position.push(
+        polygonVertices[currentIndex],
+        polygonVertices[currentIndex + 1],
+        polygonVertices[currentIndex + 2],
+      );
+      this.position.push(
+        polygonVertices[nextIndex],
+        polygonVertices[nextIndex + 1],
+        polygonVertices[nextIndex + 2],
+      );
+      this.position.push(centerX, centerY, centerZ);
+    }
     this.positionStride = 3;
     this.positionVbo = WebGLUtility.createVBO(this.gl, this.position);
 
-    // prettier-ignore
-    this.color = [
-      1.0, 0.0, 0.0, 1.0,
-      0.0, 1.0, 0.0, 1.0,
-      0.0, 0.0, 1.0, 1.0,
+    this.color = [];
+    this.color.push(1.0, 1.0, 1.0, 1.0);
+
+    const baseColors = [
+      [1.0, 0.0, 0.0, 1.0],
+      [0.0, 1.0, 0.0, 1.0],
+      [0.0, 0.0, 1.0, 1.0],
     ];
+
+    for (let i = 0; i < numVertices; i++) {
+      const currentColorIndex = i % baseColors.length;
+      const nextColorIndex = (i + 1) % baseColors.length;
+
+      const currentColor = baseColors[currentColorIndex];
+      const nextColor = baseColors[nextColorIndex];
+
+      this.color.push(...currentColor);
+      this.color.push(...nextColor);
+      this.color.push(1.0, 1.0, 1.0, 1.0);
+    }
     this.colorStride = 4;
     this.colorVbo = WebGLUtility.createVBO(this.gl, this.color);
   };
@@ -88,6 +135,10 @@ export class App {
       attributeLocationArray,
       strideArray,
     );
+
+    this.uniformLocation = {
+      time: gl.getUniformLocation(this.program, 'time'),
+    };
   };
 
   setupRendering = () => {
@@ -97,9 +148,31 @@ export class App {
     gl.clear(gl.COLOR_BUFFER_BIT);
   };
 
+  start = () => {
+    this.startTime = Date.now();
+    this.isRendering = true;
+    this.render();
+  };
+
+  stop = () => {
+    this.isRendering = false;
+  };
+
   render = () => {
     const gl = this.gl;
+
+    if (this.isRendering) {
+      requestAnimationFrame(this.render);
+    }
+
+    this.setupRendering();
+
+    const nowTime = (Date.now() - this.startTime) * 0.001;
+
     gl.useProgram(this.program);
+
+    gl.uniform1f(this.uniformLocation.time, nowTime);
+
     gl.drawArrays(gl.TRIANGLES, 0, this.position.length / this.positionStride);
   };
 }
