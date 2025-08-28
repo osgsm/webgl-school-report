@@ -157,7 +157,7 @@ export class Mat4 {
    * @param {Mat4} dest - 単位化する行列
    * @return {Mat4} 単位化した行列
    */
-  static identity(dest) {
+  static identity(dest = null) {
     const out = dest == null ? Mat4.create() : dest;
     out[0]  = 1; out[1]  = 0; out[2]  = 0; out[3]  = 0;
     out[4]  = 0; out[5]  = 1; out[6]  = 0; out[7]  = 0;
