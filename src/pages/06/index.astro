@@ -1,0 +1,26 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout classNames="overflow-hidden">
+  <canvas id="webgl-canvas"></canvas>
+</Layout>
+
+<script>
+  import { App } from './_App.ts';
+
+  window.addEventListener(
+    'DOMContentLoaded',
+    async () => {
+      const app = new App();
+      app.init();
+      await app.load();
+
+      app.setupGeometry();
+      app.setupLocation();
+      app.setupRendering();
+      app.start();
+    },
+    false
+  );
+</script>
