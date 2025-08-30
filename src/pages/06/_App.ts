@@ -1,6 +1,7 @@
 import { WebGLUtility } from '../../lib/webgl.js';
 import { Vec3, Mat4 } from '../../lib/math.js';
 import { WebGLGeometry } from '../../lib/geometry.js';
+import { WebGLOrbitCamera } from '../../lib/camera.js';
 
 interface PlaneGeometry {
   position: number[];
@@ -31,10 +32,19 @@ export class App {
   };
   startTime!: number;
   isRendering!: boolean;
+  camera!: WebGLOrbitCamera;
 
   init = () => {
     this.canvas = document.getElementById('webgl-canvas') as HTMLCanvasElement;
     this.gl = WebGLUtility.createWebGLContext(this.canvas);
+
+    const cameraOption = {
+      destance: 3.0,
+      min: 1.0,
+      max: 10.0,
+      move: 2.0,
+    };
+    this.camera = new WebGLOrbitCamera(this.canvas, cameraOption);
 
     this.resize();
 
@@ -145,11 +155,8 @@ export class App {
     const rotateAxis = Vec3.create(0.0, 1.0, 0.0);
     const m = Mat4.rotate(Mat4.identity(), nowTime, rotateAxis);
 
-    // ビュー座標変換行列
-    const eye = Vec3.create(0.0, 0.0, 3.0); // カメラの位置
-    const center = Vec3.create(0.0, 0.0, 0.0); // カメラの注視点
-    const upDirection = Vec3.create(0.0, 1.0, 0.0); // カメラの天面の向き
-    const v = Mat4.lookAt(eye, center, upDirection);
+    // ビュー座標変換行列はカメラクラスの更新処理の戻り値から取得する
+    const v = this.camera.update();
 
     // プロジェクション座標変換行列
     const fovy = 45;
