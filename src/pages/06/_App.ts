@@ -3,23 +3,15 @@ import { Vec3, Mat4 } from '../../lib/math.js';
 import { WebGLGeometry } from '../../lib/geometry.js';
 import { WebGLOrbitCamera } from '../../lib/camera.js';
 
-interface PlaneGeometry {
-  position: number[];
-  normal: number[];
-  color: number[];
-  texCoord: number[];
-  index: number[];
-}
-
 export class App {
   canvas!: HTMLCanvasElement;
   gl!: WebGLRenderingContext;
   program!: WebGLProgram;
   attributeLocation!: number[];
   attributeStride!: number[];
-  planeGeometry!: PlaneGeometry;
-  planeVBO!: WebGLBuffer[];
-  planeIBO!: WebGLBuffer;
+  torusGeometry!: any;
+  torusVBO!: WebGLBuffer[];
+  torusIBO!: WebGLBuffer;
   position!: number[];
   color!: number[];
   positionStride!: number;
@@ -28,11 +20,53 @@ export class App {
   colorVbo!: WebGLBuffer;
   uniformLocation!: {
     mvpMatrix: WebGLUniformLocation | null;
+    normalMatrix: WebGLUniformLocation | null;
     time: WebGLUniformLocation | null;
   };
   startTime!: number;
   isRendering!: boolean;
+  isRotation!: boolean;
   camera!: WebGLOrbitCamera;
+
+  /**
+   * バックフェイスカリングを設定する @@@
+   * @param {boolean} flag - 設定する値
+   */
+  setCulling(flag: boolean) {
+    const gl = this.gl;
+    if (gl == null) {
+      return;
+    }
+    if (flag === true) {
+      gl.enable(gl.CULL_FACE);
+    } else {
+      gl.disable(gl.CULL_FACE);
+    }
+  }
+
+  /**
+   * 深度テストを設定する @@@
+   * @param {boolean} flag - 設定する値
+   */
+  setDepthTest(flag: boolean) {
+    const gl = this.gl;
+    if (gl == null) {
+      return;
+    }
+    if (flag === true) {
+      gl.enable(gl.DEPTH_TEST);
+    } else {
+      gl.disable(gl.DEPTH_TEST);
+    }
+  }
+
+  /**
+   * isRotation を設定する @@@
+   * @param {boolean} flag - 設定する値
+   */
+  setRotation(flag: boolean) {
+    this.isRotation = flag;
+  }
 
   init = () => {
     this.canvas = document.getElementById('webgl-canvas') as HTMLCanvasElement;
@@ -86,33 +120,40 @@ export class App {
   };
 
   setupGeometry = () => {
-    const width = 1.0;
-    const height = 0.5;
-    const color = [1.0, 0.0, 0.0, 1.0];
-    this.planeGeometry = WebGLGeometry.plane(
-      width,
-      height,
+    const row = 32;
+    const column = 32;
+    const innerRadius = 0.4;
+    const outerRadius = 0.8;
+    const color = [1.0, 1.0, 1.0, 1.0];
+    this.torusGeometry = WebGLGeometry.torus(
+      row,
+      column,
+      innerRadius,
+      outerRadius,
       color,
-    ) as PlaneGeometry;
+    );
 
-    this.planeVBO = [
-      WebGLUtility.createVBO(this.gl, this.planeGeometry.position),
-      WebGLUtility.createVBO(this.gl, this.planeGeometry.color),
+    this.torusVBO = [
+      WebGLUtility.createVBO(this.gl, this.torusGeometry.position),
+      WebGLUtility.createVBO(this.gl, this.torusGeometry.normal),
+      WebGLUtility.createVBO(this.gl, this.torusGeometry.color),
     ];
-    this.planeIBO = WebGLUtility.createIBO(this.gl, this.planeGeometry.index);
+    this.torusIBO = WebGLUtility.createIBO(this.gl, this.torusGeometry.index);
   };
 
   setupLocation = () => {
     const gl = this.gl;
     this.attributeLocation = [
       gl.getAttribLocation(this.program, 'position'),
+      gl.getAttribLocation(this.program, 'normal'),
       gl.getAttribLocation(this.program, 'color'),
     ];
 
-    this.attributeStride = [3, 4];
+    this.attributeStride = [3, 3, 4];
 
     this.uniformLocation = {
       mvpMatrix: gl.getUniformLocation(this.program, 'mvpMatrix'),
+      normalMatrix: gl.getUniformLocation(this.program, 'normalMatrix'),
       time: gl.getUniformLocation(this.program, 'time'),
     };
   };
@@ -153,7 +194,10 @@ export class App {
 
     // モデル座標変換行列
     const rotateAxis = Vec3.create(0.0, 1.0, 0.0);
-    const m = Mat4.rotate(Mat4.identity(), nowTime, rotateAxis);
+    const m =
+      this.isRotation === true
+        ? Mat4.rotate(Mat4.identity(), nowTime, rotateAxis)
+        : Mat4.identity();
 
     // ビュー座標変換行列はカメラクラスの更新処理の戻り値から取得する
     const v = this.camera.update();
@@ -166,9 +210,11 @@ export class App {
     const p = Mat4.perspective(fovy, aspect, near, far);
 
     // 行列を乗算して MVP 行列を生成する（掛ける順序に注意）
-    // ※スクールのサンプルは列優先で行列を処理しています
     const vp = Mat4.multiply(p, v);
     const mvp = Mat4.multiply(vp, m);
+
+    // モデル座標変換行列の逆転置行列を生成する
+    const normalMatrix = Mat4.transpose(Mat4.inverse(m));
 
     gl.useProgram(this.program);
 
@@ -177,18 +223,23 @@ export class App {
       false,
       mvp as Float32Array,
     );
+    gl.uniformMatrix4fv(
+      this.uniformLocation.normalMatrix,
+      false,
+      normalMatrix as Float32Array,
+    );
     gl.uniform1f(this.uniformLocation.time, nowTime);
 
     WebGLUtility.enableBuffer(
       gl,
-      this.planeVBO,
+      this.torusVBO,
       this.attributeLocation,
       this.attributeStride,
-      this.planeIBO,
+      this.torusIBO,
     );
     gl.drawElements(
       gl.TRIANGLES,
-      this.planeGeometry.index.length,
+      this.torusGeometry.index.length,
       gl.UNSIGNED_SHORT,
       0,
     );
