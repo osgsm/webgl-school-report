@@ -22,14 +22,16 @@ export class App {
     mvpMatrix: WebGLUniformLocation | null;
     normalMatrix: WebGLUniformLocation | null;
     time: WebGLUniformLocation | null;
+    ambientColor: WebGLUniformLocation | null;
   };
   startTime!: number;
   isRendering!: boolean;
   isRotation!: boolean;
   camera!: WebGLOrbitCamera;
+  ambientColor!: number[];
 
   /**
-   * バックフェイスカリングを設定する @@@
+   * バックフェイスカリングを設定する
    * @param {boolean} flag - 設定する値
    */
   setCulling(flag: boolean) {
@@ -45,7 +47,7 @@ export class App {
   }
 
   /**
-   * 深度テストを設定する @@@
+   * 深度テストを設定する
    * @param {boolean} flag - 設定する値
    */
   setDepthTest(flag: boolean) {
@@ -61,7 +63,7 @@ export class App {
   }
 
   /**
-   * isRotation を設定する @@@
+   * isRotation を設定する
    * @param {boolean} flag - 設定する値
    */
   setRotation(flag: boolean) {
@@ -141,6 +143,10 @@ export class App {
     this.torusIBO = WebGLUtility.createIBO(this.gl, this.torusGeometry.index);
   };
 
+  setupLight = () => {
+    this.ambientColor = [0.1, 0.1, 0.1, 1.0];
+  };
+
   setupLocation = () => {
     const gl = this.gl;
     this.attributeLocation = [
@@ -155,6 +161,7 @@ export class App {
       mvpMatrix: gl.getUniformLocation(this.program, 'mvpMatrix'),
       normalMatrix: gl.getUniformLocation(this.program, 'normalMatrix'),
       time: gl.getUniformLocation(this.program, 'time'),
+      ambientColor: gl.getUniformLocation(this.program, 'ambientColor'),
     };
   };
 
@@ -228,6 +235,7 @@ export class App {
       false,
       normalMatrix as Float32Array,
     );
+    gl.uniform4fv(this.uniformLocation.ambientColor, this.ambientColor);
     gl.uniform1f(this.uniformLocation.time, nowTime);
 
     WebGLUtility.enableBuffer(

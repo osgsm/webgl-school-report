@@ -18,6 +18,7 @@ import Layout from '../../layouts/Layout.astro';
       await app.load();
 
       app.setupGeometry();
+      app.setupLight();
       app.setupLocation();
       app.setupRendering();
       app.start();
@@ -28,15 +29,15 @@ import Layout from '../../layouts/Layout.astro';
         depthTest: true,
         rotation: false,
       };
-      // バックフェイスカリングの有効・無効 @@@
+      // バックフェイスカリングの有効・無効
       pane.addBinding(parameter, 'culling').on('change', (v) => {
         app.setCulling(v.value);
       });
-      // 深度テストの有効・無効 @@@
+      // 深度テストの有効・無効
       pane.addBinding(parameter, 'depthTest').on('change', (v) => {
         app.setDepthTest(v.value);
       });
-      // 回転の有無 @@@
+      // 回転の有無
       pane.addBinding(parameter, 'rotation').on('change', (v) => {
         app.setRotation(v.value);
       });
