@@ -23,6 +23,7 @@ export class App {
     normalMatrix: WebGLUniformLocation | null;
     time: WebGLUniformLocation | null;
     ambientColor: WebGLUniformLocation | null;
+    eyeDirection: WebGLUniformLocation | null;
   };
   startTime!: number;
   isRendering!: boolean;
@@ -126,7 +127,7 @@ export class App {
     const column = 32;
     const innerRadius = 0.4;
     const outerRadius = 0.8;
-    const color = [1.0, 1.0, 1.0, 1.0];
+    const color = [0.5, 0.0, 0.75, 1.0];
     this.torusGeometry = WebGLGeometry.torus(
       row,
       column,
@@ -162,6 +163,7 @@ export class App {
       normalMatrix: gl.getUniformLocation(this.program, 'normalMatrix'),
       time: gl.getUniformLocation(this.program, 'time'),
       ambientColor: gl.getUniformLocation(this.program, 'ambientColor'),
+      eyeDirection: gl.getUniformLocation(this.program, 'eyeDirection'),
     };
   };
 
@@ -237,6 +239,7 @@ export class App {
     );
     gl.uniform4fv(this.uniformLocation.ambientColor, this.ambientColor);
     gl.uniform1f(this.uniformLocation.time, nowTime);
+    gl.uniform3fv(this.uniformLocation.eyeDirection, this.camera.position);
 
     WebGLUtility.enableBuffer(
       gl,
