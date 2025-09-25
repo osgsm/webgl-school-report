@@ -1,0 +1,47 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout classNames="overflow-hidden">
+  <canvas id="webgl-canvas"></canvas>
+</Layout>
+
+<script>
+  import { App } from './_App.ts';
+  import { Pane } from 'tweakpane';
+
+  window.addEventListener(
+    'DOMContentLoaded',
+    async () => {
+      const app = new App();
+      app.init();
+      await app.load();
+
+      app.setupGeometry();
+      app.setupLight();
+      app.setupLocation();
+      app.setupRendering();
+      app.start();
+
+      const pane = new Pane();
+      const parameter = {
+        culling: true,
+        depthTest: true,
+        rotation: false,
+      };
+      // バックフェイスカリングの有効・無効
+      pane.addBinding(parameter, 'culling').on('change', (v) => {
+        app.setCulling(v.value);
+      });
+      // 深度テストの有効・無効
+      pane.addBinding(parameter, 'depthTest').on('change', (v) => {
+        app.setDepthTest(v.value);
+      });
+      // 回転の有無
+      pane.addBinding(parameter, 'rotation').on('change', (v) => {
+        app.setRotation(v.value);
+      });
+    },
+    false
+  );
+</script>
